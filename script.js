@@ -568,12 +568,12 @@ function downloadReceiptPDF() {
   // Store the original style attribute so we can restore it later
   const originalStyle = element.getAttribute('style');
   
-  // Apply temporary styles to position it relatively in the normal layout flow,
-  // making it visible for html2pdf to capture without offset/canvas mismatch issues
-  element.style.position = 'relative';
+  // Temporarily position it at the absolute top-left of the page, hidden behind other content (z-index -9999),
+  // so that html2canvas can capture it from scroll position 0 without any offset or cutting off.
+  element.style.position = 'absolute';
   element.style.left = '0';
   element.style.top = '0';
-  element.style.margin = '0 auto';
+  element.style.zIndex = '-9999';
   element.style.visibility = 'visible';
   element.style.display = 'block';
   
@@ -581,7 +581,13 @@ function downloadReceiptPDF() {
     margin:       15,
     filename:     'Scoops_Store_Receipt.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' }, // Clean print white background
+    html2canvas:  { 
+      scale: 2.5, 
+      useCORS: true, 
+      backgroundColor: '#ffffff',
+      scrollY: 0,
+      scrollX: 0
+    }, // Clean print white background with scroll reset
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   

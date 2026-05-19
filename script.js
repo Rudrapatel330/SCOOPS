@@ -585,6 +585,7 @@ function downloadReceiptPDF() {
   element.style.zIndex = '100';
   element.style.visibility = 'visible';
   element.style.display = 'block';
+  element.style.opacity = '1';
   
   const opt = {
     margin:       15,
@@ -595,8 +596,9 @@ function downloadReceiptPDF() {
       useCORS: false, 
       backgroundColor: '#ffffff',
       scrollY: 0,
-      scrollX: 0
-    }, // Clean print white background with scroll reset
+      scrollX: 0,
+      ignoreElements: (el) => el.tagName === 'IMG' || el.tagName === 'IFRAME'
+    }, // Clean print white background with scroll reset, ignoring potentially broken page media
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   

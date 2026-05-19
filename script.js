@@ -574,15 +574,15 @@ function downloadReceiptPDF() {
   
   // Temporarily scroll to the absolute top of the page so html2canvas captures
   // the element from scroll position 0 without any scroll-offset or cut-off bugs.
-  // The receipt modal has position: fixed, so this happens invisibly behind it.
+  // The receipt modal has position: fixed and z-index 2000, so this happens invisibly behind it.
   window.scrollTo(0, 0);
   
-  // Temporarily position it at the absolute top-left of the page, hidden behind other content (z-index -9999),
+  // Temporarily position it at the absolute top-left of the page, hidden behind the modal overlay (z-index 100),
   // so that html2canvas can capture it from scroll position 0 without any offset or cutting off.
   element.style.position = 'absolute';
   element.style.left = '0';
   element.style.top = '0';
-  element.style.zIndex = '-9999';
+  element.style.zIndex = '100';
   element.style.visibility = 'visible';
   element.style.display = 'block';
   
@@ -592,7 +592,7 @@ function downloadReceiptPDF() {
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { 
       scale: 2.5, 
-      useCORS: true, 
+      useCORS: false, 
       backgroundColor: '#ffffff',
       scrollY: 0,
       scrollX: 0

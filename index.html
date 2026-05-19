@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SCOOPS - Artisanal ice cream crafted with love. Explore our premium flavors, create your own combinations, and visit our shop.">
+  <title>SCOOPS — Artisanal Ice Cream</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍦</text></svg>">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <a class="logo" href="#" onclick="navigateTo('home')">SCOOPS <span>🍦</span></a>
+    <div class="menu-toggle" id="mobile-menu" onclick="toggleMobileMenu()">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#" data-page="shop" onclick="navigateTo('shop')">Shop Flavors</a></li>
+      <li><a href="#" data-page="create" onclick="navigateTo('create')">Create Your Own</a></li>
+      <li><a href="#" data-page="visit" onclick="navigateTo('visit')">Visit Us</a></li>
+      <li><a href="#" data-page="about" onclick="navigateTo('about')">About</a></li>
+      <li>
+        <button class="cart-btn" id="cart-toggle" onclick="toggleCart()">
+          🛒 CART (<span id="cart-count">0</span>)
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ===== HOME PAGE ===== -->
+  <section class="page active" id="page-home">
+    <div class="hero">
+      <!-- SVG Ribbon Waves -->
+      <div class="wave-bg">
+        <div class="ribbon">
+          <svg viewBox="0 0 1440 500" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ff6b9d"/>
+                <stop offset="30%" stop-color="#c084fc"/>
+                <stop offset="60%" stop-color="#60a5fa"/>
+                <stop offset="100%" stop-color="#22d3ee"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#a78bfa"/>
+                <stop offset="40%" stop-color="#f472b6"/>
+                <stop offset="80%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#818cf8"/>
+              </linearGradient>
+              <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#e879f9"/>
+                <stop offset="50%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+            </defs>
+            <path d="M-50,120 C200,40 400,200 720,100 C1040,0 1200,180 1500,80 L1500,220 C1200,320 1040,140 720,240 C400,340 200,180 -50,260Z" fill="url(#g1)" opacity="0.7">
+              <animate attributeName="d" dur="10s" repeatCount="indefinite" values="
+                M-50,120 C200,40 400,200 720,100 C1040,0 1200,180 1500,80 L1500,220 C1200,320 1040,140 720,240 C400,340 200,180 -50,260Z;
+                M-50,140 C200,80 400,160 720,60 C1040,40 1200,200 1500,120 L1500,240 C1200,300 1040,160 720,260 C400,300 200,200 -50,240Z;
+                M-50,120 C200,40 400,200 720,100 C1040,0 1200,180 1500,80 L1500,220 C1200,320 1040,140 720,240 C400,340 200,180 -50,260Z"/>
+            </path>
+            <path d="M-50,180 C300,100 500,280 800,160 C1100,40 1300,220 1500,140 L1500,260 C1300,340 1100,160 800,280 C500,400 300,220 -50,300Z" fill="url(#g2)" opacity="0.5">
+              <animate attributeName="d" dur="12s" repeatCount="indefinite" values="
+                M-50,180 C300,100 500,280 800,160 C1100,40 1300,220 1500,140 L1500,260 C1300,340 1100,160 800,280 C500,400 300,220 -50,300Z;
+                M-50,200 C300,140 500,240 800,200 C1100,80 1300,240 1500,160 L1500,280 C1300,320 1100,200 800,300 C500,360 300,240 -50,280Z;
+                M-50,180 C300,100 500,280 800,160 C1100,40 1300,220 1500,140 L1500,260 C1300,340 1100,160 800,280 C500,400 300,220 -50,300Z"/>
+            </path>
+            <path d="M-50,240 C250,160 450,340 750,220 C1050,100 1250,300 1500,200 L1500,310 C1250,390 1050,210 750,330 C450,440 250,270 -50,350Z" fill="url(#g3)" opacity="0.35">
+              <animate attributeName="d" dur="14s" repeatCount="indefinite" values="
+                M-50,240 C250,160 450,340 750,220 C1050,100 1250,300 1500,200 L1500,310 C1250,390 1050,210 750,330 C450,440 250,270 -50,350Z;
+                M-50,260 C250,200 450,300 750,260 C1050,140 1250,320 1500,220 L1500,330 C1250,370 1050,250 750,350 C450,400 250,290 -50,330Z;
+                M-50,240 C250,160 450,340 750,220 C1050,100 1250,300 1500,200 L1500,310 C1250,390 1050,210 750,330 C450,440 250,270 -50,350Z"/>
+            </path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Canvas sprinkles -->
+      <canvas id="sprinkles-canvas"></canvas>
+
+      <!-- Floating fruit decorations -->
+      <div class="deco-items">
+        <div class="deco-item fruit-1">🍓</div>
+        <div class="deco-item fruit-2">🫐</div>
+        <div class="deco-item fruit-3">🍫</div>
+        <div class="deco-item fruit-4">✨</div>
+        <div class="deco-item fruit-5">🍇</div>
+        <div class="deco-item fruit-6">🍫</div>
+        <div class="deco-item fruit-7">✨</div>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="line">INDULGE.</span>
+          <span class="line">JOYFULLY.</span>
+        </h1>
+        <p class="hero-subtitle">ARTISANAL ICE CREAM,<br>CRAFTED WITH LOVE.</p>
+        <a href="#" class="btn-primary" onclick="navigateTo('shop')">EXPLORE THE FLAVORS</a>
+      </div>
+
+      <div class="hero-image">
+        <img src="assets/hero_icecream.png" alt="Mint Choc Chip Ice Cream Cone" class="hero-cone">
+      </div>
+    </div>
+
+    <!-- Flavor Carousel -->
+    <div class="carousel-section">
+      <div class="carousel-wrapper">
+        <div class="carousel-track" id="carousel-track">
+          <!-- Cards injected by JS -->
+        </div>
+      </div>
+      <div class="carousel-dots" id="carousel-dots"></div>
+    </div>
+  </section>
+
+  <!-- ===== SHOP FLAVORS PAGE ===== -->
+  <section class="page" id="page-shop">
+    <div class="page-header" style="text-align: center;">
+      <h1 class="page-title reveal">SHOP FLAVORS</h1>
+      <div class="flavor-tabs reveal">
+        <button class="active" onclick="filterFlavors('all', this)">ALL FLAVORS</button>
+        <button onclick="filterFlavors('classics', this)">CLASSICS</button>
+        <button onclick="filterFlavors('vegan', this)">VEGAN</button>
+      </div>
+    </div>
+    <div class="shop-grid" id="shop-grid">
+      <!-- Cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- ===== CREATE YOUR OWN PAGE ===== -->
+  <section class="page" id="page-create">
+    <div class="page-header" style="text-align: center;">
+      <h1 class="page-title reveal">CREATE YOUR OWN</h1>
+    </div>
+    <div class="create-content reveal">
+      <div class="builder-container">
+        <!-- Left: Controls -->
+        <div class="builder-controls">
+          <div class="builder-step">
+            <h2>1. CHOOSE SCOOPS</h2>
+            <div class="builder-options scoops-grid" id="builder-scoops-list">
+              <!-- JS injects scoops here -->
+            </div>
+          </div>
+          <div class="builder-step">
+            <h2>2. ADD TOPPINGS</h2>
+            <div class="builder-options toppings-grid" id="topping-options">
+              <div class="topping-option" onclick="selectTopping(this, 'Sprinkles')">
+                <div class="topping-icon">🌈</div>
+                <span>Sprinkles</span>
+              </div>
+              <div class="topping-option" onclick="selectTopping(this, 'Choco Sauce')">
+                <div class="topping-icon">🍫</div>
+                <span>Choco Sauce</span>
+              </div>
+              <div class="topping-option" onclick="selectTopping(this, 'Caramel')">
+                <div class="topping-icon">🍯</div>
+                <span>Caramel</span>
+              </div>
+              <div class="topping-option" onclick="selectTopping(this, 'Nuts')">
+                <div class="topping-icon">🥜</div>
+                <span>Nuts</span>
+              </div>
+              <div class="topping-option" onclick="selectTopping(this, 'Whip Cream')">
+                <div class="topping-icon">☁️</div>
+                <span>Whip Cream</span>
+              </div>
+              <div class="topping-option" onclick="selectTopping(this, 'Cherry')">
+                <div class="topping-icon">🍒</div>
+                <span>Cherry</span>
+              </div>
+            </div>
+          </div>
+          <div class="builder-actions">
+             <button class="btn-primary" style="width: 100%; padding: 18px; font-size: 1.1rem;" onclick="addCreationToCart()">COMPLETE THE TEAM 🍦</button>
+          </div>
+        </div>
+
+        <!-- Right: Visualizer -->
+        <div class="builder-visualizer">
+          <div class="cone-container">
+             <div id="preview-scoops" class="stacked-scoops">
+               <!-- JS injects stacked scoops here -->
+             </div>
+             <img src="assets/coan.png" alt="Ice Cream Cone" class="cone-img">
+             
+             <!-- Toppings floating display -->
+             <div id="preview-toppings" style="position:absolute; bottom: -50px; width:100%; text-align:center; font-size:1.1rem; color:var(--accent-pink); letter-spacing:2px; font-weight: 600; font-family: 'Bebas Neue', sans-serif;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT PAGE ===== -->
+  <section class="page" id="page-about">
+    <div class="page-header">
+      <h1 class="page-title reveal">ABOUT</h1>
+    </div>
+    <div class="about-content">
+      <div class="about-grid">
+        <div class="about-card reveal">
+          <h2>THE CRAFT</h2>
+          <p>Small-batch churning and hand-stirring create and deliver texture and richness our ice cream lovers can appreciate and keep coming back for. Every batch is made fresh daily in our kitchen using traditional methods passed down through generations.</p>
+          <p style="margin-top:12px;">We believe that ice cream is more than just a treat — it's an experience. That's why we take the time to perfect every recipe, testing and tasting until each flavor reaches its full potential.</p>
+          <img src="assets/craft_ingredients.png" alt="Our craft process" class="about-image">
+        </div>
+        <div class="about-card reveal">
+          <h2>OUR INGREDIENTS</h2>
+          <p>We source only the finest ingredients from local farms and trusted suppliers. Our cream comes from grass-fed cows, our fruits are picked at peak ripeness, and our chocolate is ethically sourced from sustainable cocoa farms.</p>
+          <p style="margin-top:12px;">No artificial colors, no preservatives, no shortcuts. Just pure, honest ice cream made with ingredients you can feel good about. Every spoonful tells the story of quality craftsmanship and natural goodness.</p>
+          <img src="assets/icecream_scoops.png" alt="Premium ingredients" class="about-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VISIT US PAGE ===== -->
+  <section class="page" id="page-visit">
+    <div class="page-header">
+      <h1 class="page-title reveal">VISIT US</h1>
+    </div>
+    <div class="visit-content">
+      <div class="visit-grid">
+        <div class="map-container reveal">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2422614576895!2d-74.00597688459418!3d40.71277597933015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a23e28c1191%3A0x49f75d3281df052a!2sLower%20Manhattan%2C%20New%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1620320000000" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="visit-card reveal">
+          <div class="welcome-label">WELCOME</div>
+          <h2>SCOOPS ICE CREAM</h2>
+          <div class="visit-info">
+            <div class="visit-info-item">
+              <span class="icon">📍</span>
+              <div class="details">
+                <strong>Address</strong>
+                123 Dessert Lane<br>Sweetwood Way,<br>NY 22200
+              </div>
+            </div>
+            <div class="visit-info-item">
+              <span class="icon">🕐</span>
+              <div class="details">
+                <strong>Hours</strong>
+                Mon-Fri: 11am - 10pm<br>Sat-Sun: 10am - 11pm
+              </div>
+            </div>
+            <div class="visit-info-item">
+              <span class="icon">📞</span>
+              <div class="details">
+                <strong>Contact</strong>
+                (555) 123-4567
+              </div>
+            </div>
+          </div>
+          <img src="assets/shop_interior.png" alt="Our Shop" class="visit-image">
+          <a href="#" class="btn-primary btn-directions">GET DIRECTIONS 📍</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-section">
+      <h3>JOIN THE SCOOPS FAMILY</h3>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing! 🍦');">
+        <input type="email" placeholder="Email Address" required>
+        <button type="submit">→</button>
+      </form>
+    </div>
+    <div class="footer-section">
+      <h3>LOCATION</h3>
+      <p>📍 123 Dessert Lane<br>Sweetwood Way,<br>NY 22200</p>
+    </div>
+    <div class="footer-section">
+      <h3>SOCIAL</h3>
+      <p>@ScoopsIceCream</p>
+      <div class="social-links">
+        <a href="#" title="Facebook">f</a>
+        <a href="#" title="Instagram">📷</a>
+        <a href="#" title="Twitter">𝕏</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== CART SIDEBAR ===== -->
+  <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2>YOUR CART</h2>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div class="cart-empty">
+        <div class="empty-icon">🍦</div>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div id="cart-footer" style="display:none;">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total-price">$0.00</span>
+      </div>
+      <button class="btn-primary btn-checkout" onclick="openCheckoutModal()">CHECKOUT</button>
+    </div>
+  </div>
+
+  <!-- ===== CHECKOUT MODAL ===== -->
+  <div id="checkout-modal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <button class="modal-close" onclick="closeCheckoutModal()">✕</button>
+      <h2 style="font-family:'Bebas Neue',sans-serif; letter-spacing:2px; margin-bottom:20px; color:var(--accent-pink);">SHIPPING DETAILS</h2>
+      <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)">
+        <div class="form-group">
+          <label for="cust-name">Full Name</label>
+          <input type="text" id="cust-name" required placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+          <label for="cust-address">Delivery Address</label>
+          <input type="text" id="cust-address" required placeholder="e.g. 123 Sweet Ave, Candy Land">
+        </div>
+        <div class="form-group">
+          <label for="cust-phone">Phone Number</label>
+          <input type="tel" id="cust-phone" required placeholder="e.g. +1 (555) 019-2834">
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px; padding: 15px;">GENERATE RECEIPT 📄</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== RECEIPT MODAL ===== -->
+  <div id="receipt-modal" class="modal-overlay">
+    <div class="receipt-card-container">
+      <button class="modal-close" onclick="closeReceiptModal()" style="color:#fff; z-index:2100;">✕</button>
+      
+      <!-- Captured element for PDF -->
+      <div id="receipt-card" class="receipt-card">
+        <div class="receipt-header">
+          <span class="receipt-logo">SCOOPS 🍦</span>
+          <span class="receipt-date" id="receipt-date"></span>
+        </div>
+        
+        <div class="receipt-divider"></div>
+        
+        <div class="receipt-section">
+          <h3>CUSTOMER DETAILS</h3>
+          <p><strong>Name:</strong> <span id="rec-name"></span></p>
+          <p><strong>Address:</strong> <span id="rec-address"></span></p>
+          <p><strong>Phone:</strong> <span id="rec-phone"></span></p>
+        </div>
+
+        <div class="receipt-divider"></div>
+        
+        <!-- Ice Cream Slideshow Visualizer -->
+        <div class="receipt-slideshow-container">
+          <div class="receipt-slideshow-track" id="receipt-slideshow-track">
+            <!-- Dynamic slides injected here -->
+          </div>
+          <!-- Slideshow Navigation -->
+          <div class="slideshow-nav" id="slideshow-nav-controls">
+            <button class="slide-nav-btn prev" type="button" onclick="changeReceiptSlide(-1)">❮</button>
+            <span class="slide-counter" id="receipt-slide-counter">1 / 1</span>
+            <button class="slide-nav-btn next" type="button" onclick="changeReceiptSlide(1)">❯</button>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-section">
+          <h3>ORDER ITEMS</h3>
+          <div id="receipt-items-list" class="receipt-items-list">
+             <!-- Injected items -->
+          </div>
+          <div class="receipt-total">
+            <span>TOTAL BILL:</span>
+            <span id="rec-total-price"></span>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+        
+        <div class="receipt-footer">
+          <p>Questions? Contact Scoops Support:</p>
+          <p class="receipt-contact">+1 (555) 726-6777</p>
+          <p style="font-size: 0.7rem; color: #888; margin-top: 10px;">Thank you for your order! 🍦</p>
+        </div>
+      </div>
+
+      <div class="receipt-actions">
+         <button class="btn-primary" onclick="downloadReceiptPDF()" style="width: 100%; padding: 15px;">DOWNLOAD PDF 📥</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRINTABLE RECEIPT TEMPLATE (HIDDEN FROM SCREEN) ===== -->
+  <div id="receipt-print-template" class="print-only-receipt" style="position: absolute; left: -9999px; top: -9999px; width: 450px; font-family: 'Courier New', Courier, monospace; background: white; color: black; padding: 30px; box-sizing: border-box; line-height: 1.4;">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h1 style="font-size: 24px; margin: 0; font-weight: bold; letter-spacing: 2px;">SCOOPS</h1>
+      <p style="font-size: 12px; margin: 5px 0 0 0;">Artisanal Ice Cream Shop</p>
+      <p style="font-size: 11px; margin: 2px 0;">123 Sweet Avenue, Dessert Land</p>
+      <p style="font-size: 11px; margin: 2px 0;">Phone: +1 (555) 726-6777</p>
+    </div>
+
+    <div style="border-top: 1px dashed black; margin: 15px 0;"></div>
+
+    <div style="font-size: 12px; margin-bottom: 15px;">
+      <p style="margin: 3px 0;"><strong>Date:</strong> <span id="print-date"></span></p>
+      <p style="margin: 3px 0;"><strong>Receipt #:</strong> <span id="print-receipt-num"></span></p>
+      <p style="margin: 3px 0;"><strong>Customer Name:</strong> <span id="print-cust-name"></span></p>
+      <p style="margin: 3px 0;"><strong>Address:</strong> <span id="print-cust-address"></span></p>
+      <p style="margin: 3px 0;"><strong>Phone:</strong> <span id="print-cust-phone"></span></p>
+    </div>
+
+    <div style="border-top: 1px dashed black; margin: 15px 0;"></div>
+
+    <!-- Items table -->
+    <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px dashed black;">
+          <th style="text-align: left; padding-bottom: 8px;">ITEM DESCRIPTION</th>
+          <th style="text-align: right; padding-bottom: 8px;">PRICE</th>
+        </tr>
+      </thead>
+      <tbody id="print-items-body">
+        <!-- Injected items -->
+      </tbody>
+    </table>
+
+    <div style="border-top: 1px dashed black; margin: 15px 0;"></div>
+
+    <!-- Totals -->
+    <div style="font-size: 12px; font-weight: bold;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+        <span>SUBTOTAL</span>
+        <span id="print-subtotal"></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+        <span>TAX (8%)</span>
+        <span id="print-tax"></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 14px; border-top: 1px dashed black; padding-top: 8px;">
+        <span>TOTAL</span>
+        <span id="print-total"></span>
+      </div>
+    </div>
+
+    <div style="border-top: 1px dashed black; margin: 20px 0 15px 0;"></div>
+
+    <div style="text-align: center; font-size: 11px;">
+      <p style="margin: 5px 0;">Thank you for dining with us!</p>
+      <p style="margin: 2px 0;">Please visit us again soon. 🍦</p>
+    </div>
+  </div>
+
+  <!-- html2pdf.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -568,6 +568,15 @@ function downloadReceiptPDF() {
   // Store the original style attribute so we can restore it later
   const originalStyle = element.getAttribute('style');
   
+  // Store current scroll position to restore it after capturing
+  const currentScrollY = window.scrollY;
+  const currentScrollX = window.scrollX;
+  
+  // Temporarily scroll to the absolute top of the page so html2canvas captures
+  // the element from scroll position 0 without any scroll-offset or cut-off bugs.
+  // The receipt modal has position: fixed, so this happens invisibly behind it.
+  window.scrollTo(0, 0);
+  
   // Temporarily position it at the absolute top-left of the page, hidden behind other content (z-index -9999),
   // so that html2canvas can capture it from scroll position 0 without any offset or cutting off.
   element.style.position = 'absolute';
@@ -594,12 +603,14 @@ function downloadReceiptPDF() {
   // Give the browser 150ms to lay out and paint the element in its new position
   setTimeout(() => {
     html2pdf().from(element).set(opt).save().then(() => {
-      // Restore original hidden styles
+      // Restore original hidden styles and scroll position
       element.setAttribute('style', originalStyle);
+      window.scrollTo(currentScrollX, currentScrollY);
       alert("Receipt PDF downloaded successfully!");
     }).catch(err => {
       console.error("PDF generation failed:", err);
       element.setAttribute('style', originalStyle);
+      window.scrollTo(currentScrollX, currentScrollY);
       alert("Failed to generate PDF. Please try again.");
     });
   }, 150);

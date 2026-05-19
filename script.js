@@ -561,12 +561,28 @@ function closeReceiptModal() {
 }
 
 function downloadReceiptPDF() {
-  // Capture the printable thermal-style receipt template instead of the dark screen card
-  const element = document.getElementById('receipt-print-template');
-  if (!element) return;
+  const original = document.getElementById('receipt-print-template');
+  if (!original) return;
   
-  // Store the original style attribute so we can restore it later
-  const originalStyle = element.getAttribute('style');
+  // Create a deep clone of the populated printable receipt template
+  const clone = original.cloneNode(true);
+  
+  // Set a unique ID to avoid selector duplication
+  clone.id = 'receipt-print-clone';
+  
+  // Override inline styles to make it a standard static block in the page layout flow.
+  // Statically-positioned elements attached to the body have perfect geometry for html2canvas.
+  clone.style.position = 'static';
+  clone.style.left = 'auto';
+  clone.style.top = 'auto';
+  clone.style.width = '450px';
+  clone.style.margin = '0 auto';
+  clone.style.visibility = 'visible';
+  clone.style.display = 'block';
+  clone.style.opacity = '1';
+  
+  // Append clone to document body so the browser layout engine compiles its geometry
+  document.body.appendChild(clone);
   
   // Store current scroll position to restore it after capturing
   const currentScrollY = window.scrollY;
@@ -574,18 +590,8 @@ function downloadReceiptPDF() {
   
   // Temporarily scroll to the absolute top of the page so html2canvas captures
   // the element from scroll position 0 without any scroll-offset or cut-off bugs.
-  // The receipt modal has position: fixed and z-index 2000, so this happens invisibly behind it.
+  // The receipt modal has position: fixed, so this happens invisibly behind it.
   window.scrollTo(0, 0);
-  
-  // Temporarily position it at the absolute top-left of the page, hidden behind the modal overlay (z-index 100),
-  // so that html2canvas can capture it from scroll position 0 without any offset or cutting off.
-  element.style.position = 'absolute';
-  element.style.left = '0';
-  element.style.top = '0';
-  element.style.zIndex = '100';
-  element.style.visibility = 'visible';
-  element.style.display = 'block';
-  element.style.opacity = '1';
   
   const opt = {
     margin:       15,
@@ -598,20 +604,25 @@ function downloadReceiptPDF() {
       scrollY: 0,
       scrollX: 0,
       ignoreElements: (el) => el.tagName === 'IMG' || el.tagName === 'IFRAME'
-    }, // Clean print white background with scroll reset, ignoring potentially broken page media
+    }, // Clean print white background, ignoring potentially broken page media/CORS issues
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   
-  // Give the browser 150ms to lay out and paint the element in its new position
+  // Give the browser 150ms to lay out and paint the clone in the DOM
   setTimeout(() => {
-    html2pdf().from(element).set(opt).save().then(() => {
-      // Restore original hidden styles and scroll position
-      element.setAttribute('style', originalStyle);
+    html2pdf().from(clone).set(opt).save().then(() => {
+      // Clean up: remove the clone from DOM and restore scroll
+      if (document.getElementById('receipt-print-clone')) {
+        document.body.removeChild(clone);
+      }
       window.scrollTo(currentScrollX, currentScrollY);
       alert("Receipt PDF downloaded successfully!");
     }).catch(err => {
       console.error("PDF generation failed:", err);
-      element.setAttribute('style', originalStyle);
+      // Clean up: remove the clone from DOM and restore scroll
+      if (document.getElementById('receipt-print-clone')) {
+        document.body.removeChild(clone);
+      }
       window.scrollTo(currentScrollX, currentScrollY);
       alert("Failed to generate PDF. Please try again.");
     });

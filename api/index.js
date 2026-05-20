@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -208,6 +209,80 @@ app.delete('/api/orders/:id', async (req, res) => {
   } catch (error) {
     console.error('Delete order error:', error);
     res.status(500).json({ error: 'Internal server error deleting order.' });
+  }
+});
+
+// ===== ADMIN SECURITY & ROUTES =====
+
+// Helper to get time in IST (HHMM format)
+const getISTTimeCode = (offsetMinutes = 0) => {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() + offsetMinutes);
+  const formatter = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Kolkata',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  const parts = formatter.formatToParts(d);
+  const h = parts.find(p => p.type === 'hour').value;
+  const m = parts.find(p => p.type === 'minute').value;
+  return `${h}${m}`;
+};
+
+// Admin Login Endpoint
+app.post('/api/admin/login', async (req, res) => {
+  const { email, password, code } = req.body;
+
+  // Strict Hardcoded verification (Secured in backend, hidden from frontend)
+  if (email !== 'rudraptl@gmail.com' || password !== '26112008@Rudra') {
+    return res.status(401).json({ error: 'Invalid admin credentials' });
+  }
+
+  // Secure Time-based Code Verification (allows +/- 1 minute drift)
+  const currentCode = getISTTimeCode(0);
+  const prevCode = getISTTimeCode(-1);
+  const nextCode = getISTTimeCode(1);
+
+  if (code !== currentCode && code !== prevCode && code !== nextCode) {
+    return res.status(401).json({ error: 'Invalid secure time code' });
+  }
+
+  // Generate secure session token derived from Supabase Secret
+  const adminToken = crypto.createHmac('sha256', process.env.SUPABASE_KEY || 'fallback_secret')
+                           .update('admin_session_auth')
+                           .digest('hex');
+
+  res.json({ token: adminToken });
+});
+
+// Admin Authentication Middleware
+const adminAuthMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const expectedToken = crypto.createHmac('sha256', process.env.SUPABASE_KEY || 'fallback_secret')
+                              .update('admin_session_auth')
+                              .digest('hex');
+
+  if (!authHeader || authHeader !== `Bearer ${expectedToken}`) {
+    return res.status(401).json({ error: 'Unauthorized admin access' });
+  }
+  next();
+};
+
+// Get ALL Orders for Admin
+app.get('/api/admin/orders', adminAuthMiddleware, async (req, res) => {
+  try {
+    const { data: orders, error: ordersError } = await supabase
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (ordersError) throw ordersError;
+
+    res.json({ orders });
+  } catch (error) {
+    console.error('Admin fetch orders error:', error);
+    res.status(500).json({ error: 'Failed to fetch orders.' });
   }
 });
 

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCOOPS - Admin Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070810;
+      --accent-pink: #e91e8c;
+      --accent-purple: #818cf8;
+      --text-main: #ffffff;
+      --text-muted: #8892b0;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Admin Login Box */
+    #admin-login-container {
+      margin-top: 10vh;
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+      background: rgba(15, 16, 26, 0.6);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+      color: var(--accent-pink);
+    }
+    
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent-purple);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(233, 30, 140, 0.4);
+    }
+
+    /* Admin Dashboard */
+    #admin-dashboard {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+      padding: 40px 20px;
+    }
+
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logout-btn {
+      width: auto;
+      padding: 8px 20px;
+      background: rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(15, 16, 26, 0.6);
+      backdrop-filter: blur(25px);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    th, td {
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    th {
+      background: rgba(255,255,255,0.05);
+      font-weight: 600;
+      color: var(--accent-purple);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    td {
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .customer-info strong {
+      display: block;
+      color: #fff;
+      font-size: 1.05rem;
+    }
+
+    .customer-phone {
+      color: var(--accent-pink);
+      font-size: 0.85rem;
+    }
+    
+    .order-items {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    
+    .total-price {
+      font-weight: 600;
+      color: #4ade80;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="admin-login-container">
+    <h1>SCOOPS ADMIN</h1>
+    <p class="subtitle">Secure Portal Access</p>
+    
+    <form id="admin-form" onsubmit="handleAdminLogin(event)">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="admin-email" required placeholder="admin@scoops.com">
+      </div>
+      <div class="form-group">
+        <label>Master Password</label>
+        <input type="password" id="admin-pass" required placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Secure Time Code (HHMM)</label>
+        <input type="text" id="admin-code" required placeholder="e.g. 1705" maxlength="4">
+      </div>
+      <button type="submit" id="login-btn">AUTHENTICATE</button>
+    </form>
+  </div>
+
+  <!-- Dashboard Screen -->
+  <div id="admin-dashboard">
+    <div class="dash-header">
+      <div>
+        <h1 style="font-size: 2rem;">ORDER DASHBOARD</h1>
+        <p style="color: var(--text-muted);">Real-time overview of all customer orders.</p>
+      </div>
+      <button class="logout-btn" onclick="handleAdminLogout()">LOCK PORTAL 🔒</button>
+    </div>
+    
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID / Date</th>
+            <th>Customer Details</th>
+            <th>Delivery Address</th>
+            <th>Order Items</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="orders-table-body">
+          <!-- JS injects orders here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Check if already logged in via Session Storage (clears on browser close)
+    const storedToken = sessionStorage.getItem('scoops_admin_token');
+    if (storedToken) {
+      showDashboard(storedToken);
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value;
+      const password = document.getElementById('admin-pass').value;
+      const code = document.getElementById('admin-code').value;
+      const btn = document.getElementById('login-btn');
+      
+      btn.textContent = 'VERIFYING...';
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, code })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          sessionStorage.setItem('scoops_admin_token', data.token);
+          showDashboard(data.token);
+        } else {
+          alert('Security Alert: ' + (data.error || 'Authentication Failed'));
+        }
+      } catch (err) {
+        alert('Network Error. Could not connect to server.');
+      } finally {
+        btn.textContent = 'AUTHENTICATE';
+        btn.disabled = false;
+      }
+    }
+
+    async function showDashboard(token) {
+      document.getElementById('admin-login-container').style.display = 'none';
+      document.getElementById('admin-dashboard').style.display = 'block';
+      
+      const tbody = document.getElementById('orders-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Fetching secure order data...</td></tr>';
+
+      try {
+        const response = await fetch('/api/admin/orders', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            handleAdminLogout();
+            alert('Session expired. Please log in again.');
+            return;
+          }
+          throw new Error('Failed to fetch orders');
+        }
+
+        const data = await response.json();
+        
+        if (data.orders.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No orders found in the database.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.orders.map(o => `
+          <tr>
+            <td>
+              <strong style="color: #fff;">#${o.id.slice(0,6).toUpperCase()}</strong><br>
+              <span style="font-size: 0.8rem; color: #888;">${new Date(o.created_at).toLocaleString()}</span>
+            </td>
+            <td class="customer-info">
+              <strong>${o.name}</strong>
+              <div class="customer-phone">📞 ${o.phone}</div>
+            </td>
+            <td style="max-width: 250px;">${o.address}</td>
+            <td class="order-items">
+              ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
+            </td>
+            <td class="total-price">$${parseFloat(o.total_price).toFixed(2)}</td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error fetching data.</td></tr>';
+      }
+    }
+
+    function handleAdminLogout() {
+      sessionStorage.removeItem('scoops_admin_token');
+      document.getElementById('admin-dashboard').style.display = 'none';
+      document.getElementById('admin-login-container').style.display = 'block';
+      document.getElementById('admin-form').reset();
+    }
+  </script>
+</body>
+</html>

@@ -1690,3 +1690,317 @@ body {
   opacity: 1 !important;
   visibility: visible !important;
 }
+
+/* ===== AUTH / PROFILE ===== */
+.login-nav-btn {
+  font-weight: bold;
+  color: var(--accent-pink) !important;
+  padding: 8px 16px;
+  border: 1px solid var(--accent-pink);
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+.login-nav-btn:hover {
+  background: var(--accent-pink);
+  color: #fff !important;
+}
+
+.profile-avatar-btn {
+  background: linear-gradient(135deg, var(--accent-pink), #a78bfa);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0;
+  box-shadow: 0 4px 15px rgba(233, 30, 140, 0.4);
+}
+
+.profile-avatar-btn:hover {
+  transform: scale(1.15) rotate(5deg);
+  border-color: #fff;
+  box-shadow: 0 8px 25px rgba(233, 30, 140, 0.6);
+}
+
+.profile-dashboard {
+  padding: 0 48px 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+@media(max-width: 900px) {
+  .profile-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+.glass-panel {
+  background: rgba(15, 16, 26, 0.6);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.profile-sidebar {
+  padding: 0;
+}
+
+.profile-sidebar-header {
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.profile-avatar-large {
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(135deg, var(--accent-pink), #a78bfa);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0 auto 20px;
+  box-shadow: 0 10px 25px rgba(233, 30, 140, 0.4);
+  border: 3px solid rgba(255, 255, 255, 0.15);
+}
+
+.profile-name-small {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.profile-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  background: rgba(233, 30, 140, 0.15);
+  color: var(--accent-pink);
+  padding: 4px 12px;
+  border-radius: 50px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.profile-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.profile-nav button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  text-align: left;
+  padding: 14px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 5px;
+}
+
+.profile-nav button:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+}
+
+.profile-nav button.active {
+  background: rgba(233, 30, 140, 0.1);
+  color: var(--accent-pink);
+  font-weight: 600;
+}
+
+.profile-nav button.logout-link {
+  margin-top: 15px;
+  color: #888;
+}
+
+.profile-nav button.logout-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.profile-main {
+  padding: 45px;
+}
+
+.profile-section {
+  margin-bottom: 40px;
+}
+
+.profile-section:last-child {
+  margin-bottom: 0;
+}
+
+.profile-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 25px;
+}
+
+.info-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.info-value {
+  font-size: 1.05rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-active {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.2);
+  display: inline-block;
+}
+
+.profile-divider {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  margin: 40px 0;
+}
+
+.btn-profile-delete {
+  padding: 14px 24px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-profile-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.order-id {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: var(--accent-pink);
+  margin-right: 10px;
+  letter-spacing: 1px;
+}
+
+.order-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.order-delete-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  padding: 5px;
+}
+
+.order-delete-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.order-items {
+  font-size: 0.95rem;
+  color: #ddd;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.order-total {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #fff;
+  text-align: right;
+}

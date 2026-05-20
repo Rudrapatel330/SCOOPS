@@ -30,7 +30,180 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbarScroll();
   initSprinkles();
   updateCart(); // Load saved cart
+  initAuth(); // Initialize auth state
 });
+
+// ===== AUTH UI =====
+let loginFromCheckout = false;
+
+function initAuth() {
+  const user = JSON.parse(localStorage.getItem('scoops_user'));
+  const loginNav = document.getElementById('nav-auth-login');
+  const profileNav = document.getElementById('nav-auth-profile');
+  
+  if (user) {
+    if (loginNav) loginNav.style.display = 'none';
+    if (profileNav) {
+      profileNav.style.display = 'block';
+      const sidebarName = document.getElementById('profile-sidebar-name');
+      const mainName = document.getElementById('profile-main-name');
+      const mainPhone = document.getElementById('profile-main-phone');
+      
+      if (sidebarName) sidebarName.textContent = user.name;
+      if (mainName) mainName.textContent = user.name;
+      if (mainPhone) mainPhone.textContent = user.phone;
+      
+      const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+      const navInitial = document.getElementById('nav-avatar-initial');
+      const profileInitial = document.getElementById('profile-avatar-initial');
+      if (navInitial) navInitial.textContent = initial;
+      if (profileInitial) profileInitial.textContent = initial;
+    }
+  } else {
+    if (loginNav) loginNav.style.display = 'block';
+    if (profileNav) profileNav.style.display = 'none';
+  }
+}
+
+function openLoginModal(fromCheckout = false) {
+  loginFromCheckout = fromCheckout;
+  const loginModal = document.getElementById('login-modal');
+  if (loginModal) loginModal.classList.add('active');
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-sidebar').classList.remove('open');
+}
+
+function logout() {
+  localStorage.removeItem('scoops_user');
+  initAuth();
+  navigateTo('home');
+  alert('You have been logged out.');
+}
+
+function switchProfileTab(tab) {
+  const detailsTab = document.getElementById('profile-tab-details');
+  const ordersTab = document.getElementById('profile-tab-orders');
+  const detailsBtn = document.getElementById('tab-btn-details');
+  const ordersBtn = document.getElementById('tab-btn-orders');
+  
+  if (!detailsTab || !ordersTab) return;
+
+  if (tab === 'details') {
+    detailsTab.style.display = 'block';
+    ordersTab.style.display = 'none';
+    detailsBtn.classList.add('active');
+    ordersBtn.classList.remove('active');
+  } else if (tab === 'orders') {
+    detailsTab.style.display = 'none';
+    ordersTab.style.display = 'block';
+    detailsBtn.classList.remove('active');
+    ordersBtn.classList.add('active');
+    fetchOrderHistory();
+  }
+}
+
+async function fetchOrderHistory() {
+  const user = JSON.parse(localStorage.getItem('scoops_user'));
+  if (!user) return;
+  
+  const list = document.getElementById('orders-list');
+  list.innerHTML = '<p style="color: var(--text-muted);">Loading your orders...</p>';
+  
+  try {
+    const response = await fetch(`http://localhost:3000/api/orders?phone=${encodeURIComponent(user.phone)}`);
+    if (!response.ok) throw new Error('Failed to fetch');
+    const data = await response.json();
+    
+    if (data.orders && data.orders.length > 0) {
+      list.innerHTML = data.orders.map(order => `
+        <div class="order-card" id="order-${order.id}">
+          <div class="order-header">
+            <div>
+              <span class="order-id">#${order.id.slice(0, 8)}</span>
+              <span class="order-date">${new Date(order.created_at).toLocaleDateString()}</span>
+            </div>
+            <button class="order-delete-btn" onclick="deleteOrder('${order.id}')" title="Delete Record">🗑️</button>
+          </div>
+          <div class="order-items">
+            ${order.items.map(item => `<div>• ${item.name} (x${item.qty})</div>`).join('')}
+          </div>
+          <div class="order-total">
+            Total: $${parseFloat(order.total_price).toFixed(2)}
+          </div>
+        </div>
+      `).join('');
+    } else {
+      list.innerHTML = '<p style="color: var(--text-muted); padding: 20px 0;">No past orders found. Time to treat yourself! 🍦</p>';
+    }
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = '<p style="color: #ef4444;">Failed to load order history.</p>';
+  }
+}
+
+async function deleteOrder(orderId) {
+  const user = JSON.parse(localStorage.getItem('scoops_user'));
+  if (!user) return;
+  
+  const confirmDel = confirm('Are you sure you want to delete this order record?');
+  if (!confirmDel) return;
+  
+  const card = document.getElementById(`order-${orderId}`);
+  if (card) card.style.opacity = '0.5';
+  
+  try {
+    const response = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: user.phone })
+    });
+    
+    if (response.ok) {
+      if (card) card.remove();
+      // Check if empty now
+      const list = document.getElementById('orders-list');
+      if (list && list.children.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-muted); padding: 20px 0;">No past orders found. Time to treat yourself! 🍦</p>';
+      }
+    } else {
+      if (card) card.style.opacity = '1';
+      alert('Failed to delete order record.');
+    }
+  } catch (err) {
+    console.error(err);
+    if (card) card.style.opacity = '1';
+    alert('Network error while deleting order.');
+  }
+}
+
+async function deleteAccount() {
+  const user = JSON.parse(localStorage.getItem('scoops_user'));
+  if (!user) return;
+  
+  const confirmDelete = confirm('Are you sure you want to delete your account? This action cannot be undone and will delete all your past orders.');
+  if (!confirmDelete) return;
+  
+  try {
+    const response = await fetch('http://localhost:3000/api/account', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: user.phone })
+    });
+    
+    if (response.ok) {
+      localStorage.removeItem('scoops_user');
+      initAuth();
+      navigateTo('home');
+      alert('Your account has been completely deleted. We are sad to see you go!');
+    } else {
+      const data = await response.json();
+      alert(data.error || 'Failed to delete account.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Failed to connect to the server to delete account.');
+  }
+}
 
 // ===== RENDER BUILDER SCOOPS =====
 function renderBuilderScoops() {
@@ -379,9 +552,63 @@ function openCheckoutModal() {
   document.getElementById('cart-overlay').classList.remove('open');
   document.getElementById('cart-sidebar').classList.remove('open');
   
-  // Show the checkout modal
-  const modal = document.getElementById('checkout-modal');
-  if (modal) modal.classList.add('active');
+  const user = JSON.parse(localStorage.getItem('scoops_user'));
+  if (!user) {
+    // Show login modal
+    openLoginModal(true);
+  } else {
+    // Populate user details and show checkout modal
+    document.getElementById('cust-name').value = user.name;
+    document.getElementById('cust-phone').value = user.phone;
+    
+    const modal = document.getElementById('checkout-modal');
+    if (modal) modal.classList.add('active');
+  }
+}
+
+function closeLoginModal() {
+  const modal = document.getElementById('login-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+async function handleLoginSubmit(event) {
+  event.preventDefault();
+  const name = document.getElementById('login-name').value;
+  const phone = document.getElementById('login-phone').value;
+  const btn = document.getElementById('login-submit-btn');
+  
+  try {
+    btn.textContent = 'LOGGING IN...';
+    btn.disabled = true;
+    
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      localStorage.setItem('scoops_user', JSON.stringify({ name, phone }));
+      closeLoginModal();
+      initAuth(); // Update navbar
+      
+      if (loginFromCheckout) {
+        openCheckoutModal();
+      } else {
+        alert('Welcome to Scoops, ' + name + '! 🍦');
+      }
+    } else {
+      alert(data.errors ? data.errors.map(e => e.msg).join('\\n') : data.error || 'Login failed');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Failed to connect to the server.');
+  } finally {
+    btn.textContent = 'LOGIN / SIGN UP 🚀';
+    btn.disabled = false;
+  }
 }
 
 function closeCheckoutModal() {
@@ -389,13 +616,56 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-function handleCheckoutSubmit(event) {
+async function handleCheckoutSubmit(event) {
   event.preventDefault();
   
   const name = document.getElementById('cust-name').value;
   const address = document.getElementById('cust-address').value;
   const phone = document.getElementById('cust-phone').value;
+  const submitBtn = event.target.querySelector('button[type="submit"]');
   
+  let subtotal = 0;
+  cart.forEach(item => subtotal += item.price);
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+  
+  try {
+    submitBtn.textContent = 'PROCESSING...';
+    submitBtn.disabled = true;
+    
+    const response = await fetch('http://localhost:3000/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        address,
+        items: cart,
+        totalPrice: total
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      alert(data.errors ? data.errors.map(e => e.msg).join('\\n') : data.error || 'Order failed');
+      submitBtn.textContent = 'GENERATE RECEIPT 📄';
+      submitBtn.disabled = false;
+      return;
+    }
+    
+    // Order successful, proceed to show receipt
+  } catch (err) {
+    console.error(err);
+    alert('Failed to connect to the server.');
+    submitBtn.textContent = 'GENERATE RECEIPT 📄';
+    submitBtn.disabled = false;
+    return;
+  }
+  
+  submitBtn.textContent = 'GENERATE RECEIPT 📄';
+  submitBtn.disabled = false;
+
   // Populate the receipt modal details
   document.getElementById('rec-name').textContent = name;
   document.getElementById('rec-address').textContent = address;
@@ -416,9 +686,9 @@ function handleCheckoutSubmit(event) {
   document.getElementById('print-cust-phone').textContent = phone;
   
   // Populate Printable Items List & Calculate Tax/Subtotal
-  let subtotal = 0;
+  let printSubtotal = 0;
   const printItemsHTML = cart.map(item => {
-    subtotal += item.price;
+    printSubtotal += item.price;
     let details = '';
     if (item.customScoops && item.customScoops.length > 0) {
       details += `<div style="font-size: 10px; color: #555; margin-left: 10px;">Scoops: ${item.customScoops.map(s => s.name).join(', ')}</div>`;
@@ -437,13 +707,13 @@ function handleCheckoutSubmit(event) {
     `;
   }).join('');
   
-  const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const printTax = printSubtotal * 0.08;
+  const printTotal = printSubtotal + printTax;
   
   document.getElementById('print-items-body').innerHTML = printItemsHTML;
-  document.getElementById('print-subtotal').textContent = `$${subtotal.toFixed(2)}`;
-  document.getElementById('print-tax').textContent = `$${tax.toFixed(2)}`;
-  document.getElementById('print-total').textContent = `$${total.toFixed(2)}`;
+  document.getElementById('print-subtotal').textContent = `$${printSubtotal.toFixed(2)}`;
+  document.getElementById('print-tax').textContent = `$${printTax.toFixed(2)}`;
+  document.getElementById('print-total').textContent = `$${printTotal.toFixed(2)}`;
 
   // Render visual ice cream slideshow for screen card
   renderReceiptSlideshow();

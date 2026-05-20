@@ -569,28 +569,98 @@ function openCheckoutModal() {
 function closeLoginModal() {
   const modal = document.getElementById('login-modal');
   if (modal) modal.classList.remove('active');
+  document.body.style.overflow = 'auto'; // restore scroll
+  
+  // Reset MFA state
+  if (typeof isMfaMode !== 'undefined') {
+    isMfaMode = false;
+    const normalFields = document.getElementById('login-fields-normal');
+    const mfaFields = document.getElementById('login-fields-mfa');
+    if (normalFields) normalFields.style.display = 'block';
+    if (mfaFields) mfaFields.style.display = 'none';
+    
+    const nameInput = document.getElementById('login-name');
+    const emailInput = document.getElementById('login-email');
+    const phoneInput = document.getElementById('login-phone');
+    if (nameInput) nameInput.required = true;
+    if (emailInput) emailInput.required = true;
+    if (phoneInput) phoneInput.required = true;
+    
+    const mfaInput = document.getElementById('login-mfa-code');
+    if (mfaInput) { mfaInput.value = ''; mfaInput.required = false; }
+    
+    const btn = document.getElementById('login-submit-btn');
+    if (btn) btn.textContent = 'LOGIN / SIGN UP 🚀';
+  }
 }
+
+let isMfaMode = false;
 
 async function handleLoginSubmit(event) {
   event.preventDefault();
+  
   const name = document.getElementById('login-name').value;
+  const email = document.getElementById('login-email').value;
   const phone = document.getElementById('login-phone').value;
+  const mfaInput = document.getElementById('login-mfa-code');
+  const mfaCode = mfaInput ? mfaInput.value : '';
   const btn = document.getElementById('login-submit-btn');
   
   try {
-    btn.textContent = 'LOGGING IN...';
+    btn.textContent = 'AUTHENTICATING...';
     btn.disabled = true;
     
+    if (isMfaMode) {
+      // Step 2: Handle Admin MFA Submit
+      const response = await fetch('/api/admin/verify_mfa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: mfaCode })
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        sessionStorage.setItem('scoops_admin_token', data.token);
+        window.location.href = '/admin.html';
+      } else {
+        alert('Security Alert: ' + (data.error || 'Authentication Failed'));
+        btn.textContent = 'VERIFY CODE';
+        btn.disabled = false;
+      }
+      return; // Stop execution here
+    }
+
+    // Step 1: Normal Login (User or Admin Trigger)
     const response = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone })
+      body: JSON.stringify({ name, email, phone })
     });
     
     const data = await response.json();
     
     if (response.ok) {
-      localStorage.setItem('scoops_user', JSON.stringify({ name, phone }));
+      if (data.action === 'requires_mfa') {
+        // Switch to MFA Mode
+        isMfaMode = true;
+        document.getElementById('login-fields-normal').style.display = 'none';
+        document.getElementById('login-fields-mfa').style.display = 'block';
+        
+        // Remove required from normal fields
+        document.getElementById('login-name').required = false;
+        document.getElementById('login-email').required = false;
+        document.getElementById('login-phone').required = false;
+        
+        // Add required to MFA code
+        if (mfaInput) mfaInput.required = true;
+        
+        btn.textContent = 'VERIFY CODE';
+        btn.disabled = false;
+        return;
+      }
+
+      // Normal User Login Success
+      localStorage.setItem('scoops_user', JSON.stringify({ name, phone, email }));
       closeLoginModal();
       initAuth(); // Update navbar
       
@@ -600,13 +670,14 @@ async function handleLoginSubmit(event) {
         alert('Welcome to Scoops, ' + name + '! 🍦');
       }
     } else {
-      alert(data.errors ? data.errors.map(e => e.msg).join('\\n') : data.error || 'Login failed');
+      alert(data.errors ? data.errors.map(e => e.msg).join('\n') : data.error || 'Login failed');
+      btn.textContent = 'LOGIN / SIGN UP 🚀';
+      btn.disabled = false;
     }
   } catch (err) {
     console.error(err);
     alert('Failed to connect to the server.');
-  } finally {
-    btn.textContent = 'LOGIN / SIGN UP 🚀';
+    btn.textContent = isMfaMode ? 'VERIFY CODE' : 'LOGIN / SIGN UP 🚀';
     btn.disabled = false;
   }
 }

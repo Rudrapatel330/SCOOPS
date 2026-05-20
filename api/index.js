@@ -28,12 +28,6 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Validation rules
-const loginValidation = [
-  body('name').trim().isLength({ min: 2, max: 100 }).escape().withMessage('Name must be between 2 and 100 characters.'),
-  body('phone').trim().isMobilePhone().withMessage('Invalid phone number.')
-];
-
 const orderValidation = [
   body('name').trim().isLength({ min: 2, max: 100 }).escape(),
   body('phone').trim().isMobilePhone(),
@@ -42,21 +36,35 @@ const orderValidation = [
   body('totalPrice').isFloat({ min: 0 }).withMessage('Total price must be a positive number.')
 ];
 
-// Login Endpoint
-app.post('/api/login', loginValidation, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+// Login Endpoint (Handles both Admin & Users)
+app.post('/api/login', async (req, res) => {
+  const { name, email, phone } = req.body;
+
+  // 1. Admin Detection
+  if (email === 'rudraptl@gmail.com' && phone === '26112008@Rudra') {
+    return res.json({ action: 'requires_mfa' });
   }
 
-  const { name, phone } = req.body;
+  // 2. Regular User Validation
+  if (!name || name.length < 2) return res.status(400).json({ error: 'Name must be at least 2 characters.' });
+  if (!phone || phone.length < 7) return res.status(400).json({ error: 'Invalid phone number.' });
 
   try {
-    // Upsert user into Supabase users table
-    const { data, error } = await supabase
+    // Attempt to upsert with email
+    let { data, error } = await supabase
       .from('users')
-      .upsert([{ name, phone }], { onConflict: 'phone' })
+      .upsert([{ name, email: email || null, phone }], { onConflict: 'phone' })
       .select();
+
+    // If it fails (likely because 'email' column doesn't exist yet), fallback to name/phone
+    if (error && error.message.includes('email')) {
+      const fallback = await supabase
+        .from('users')
+        .upsert([{ name, phone }], { onConflict: 'phone' })
+        .select();
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) throw error;
 
@@ -230,14 +238,9 @@ const getISTTimeCode = (offsetMinutes = 0) => {
   return `${h}${m}`;
 };
 
-// Admin Login Endpoint
-app.post('/api/admin/login', async (req, res) => {
-  const { email, password, code } = req.body;
-
-  // Strict Hardcoded verification (Secured in backend, hidden from frontend)
-  if (email !== 'rudraptl@gmail.com' || password !== '26112008@Rudra') {
-    return res.status(401).json({ error: 'Invalid admin credentials' });
-  }
+// Admin MFA Verification Endpoint
+app.post('/api/admin/verify_mfa', async (req, res) => {
+  const { code } = req.body;
 
   // Secure Time-based Code Verification (allows +/- 1 minute drift)
   const currentCode = getISTTimeCode(0);

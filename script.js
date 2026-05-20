@@ -110,7 +110,7 @@ async function fetchOrderHistory() {
   list.innerHTML = '<p style="color: var(--text-muted);">Loading your orders...</p>';
   
   try {
-    const response = await fetch(`http://localhost:3000/api/orders?phone=${encodeURIComponent(user.phone)}`);
+    const response = await fetch(`/api/orders?phone=${encodeURIComponent(user.phone)}`);
     if (!response.ok) throw new Error('Failed to fetch');
     const data = await response.json();
     
@@ -152,7 +152,7 @@ async function deleteOrder(orderId) {
   if (card) card.style.opacity = '0.5';
   
   try {
-    const response = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+    const response = await fetch(`/api/orders/${orderId}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone: user.phone })
@@ -184,7 +184,7 @@ async function deleteAccount() {
   if (!confirmDelete) return;
   
   try {
-    const response = await fetch('http://localhost:3000/api/account', {
+    const response = await fetch('/api/account', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone: user.phone })
@@ -581,7 +581,7 @@ async function handleLoginSubmit(event) {
     btn.textContent = 'LOGGING IN...';
     btn.disabled = true;
     
-    const response = await fetch('http://localhost:3000/api/login', {
+    const response = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, phone })
@@ -633,7 +633,7 @@ async function handleCheckoutSubmit(event) {
     submitBtn.textContent = 'PROCESSING...';
     submitBtn.disabled = true;
     
-    const response = await fetch('http://localhost:3000/api/orders', {
+    const response = await fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
